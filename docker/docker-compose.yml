@@ -1,0 +1,19 @@
+version: '3'
+services:
+    nginx:
+        container_name: nginx
+        image: nginx
+        ports:
+          - "80:80"
+        links:
+          - api
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        restart: always
+    api:
+        container_name: api
+        image: python:3.5
+        volumes:
+          - ../:/api/
+        command: sh -c "cd /api && pip install -r requirements.txt && python main.py"
+        restart: always
