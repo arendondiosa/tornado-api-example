@@ -6,7 +6,6 @@ import tornado.web
 import os
 
 response = {
-    'ok': True,
     'data': [
         {'id': 1, 'first_name': 'Sam', 'last_name': 'Smith', 'phone': '333-333-3333',
          'email': 'ssmith@yahoo.com', 'address': '33 Birch Rd', 'city': 'Miami', 'state': 'FL'},
@@ -37,22 +36,31 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class Welcome(BaseHandler):
     def get(self):
-        response = {
-            'ok': True,
-            'message':  'Welcome to API'
-        }
-        self.write(response)
-
-    def post(self):
-        username = self.get_argument('username')
-        designation = self.get_argument('designation')
-
-        global response['data'].push({ username, designation })
-        self.write("Wow " + username + " you're a " + designation)
+        self.write({
+            'status': 200,
+            'data': 'Welcome to API'
+        })
 
 class GetCustomers(BaseHandler):
     def get(self):
-        self.write(response)
+        self.write({
+            'status': 200,
+            'data': response
+        })
+
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        username, designation = data
+
+        global response
+
+        response['data'].append(
+            {'id': 'x', 'first_name': username, 'last_name': designation})
+
+        self.write({
+            'status': 200,
+            'data': response
+        })
 
 
 application = tornado.web.Application([
